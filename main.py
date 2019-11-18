@@ -4,13 +4,14 @@
 # Filename: main.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:21:33 2019 (+0100)
-# Last-Updated: Fri Nov 15 18:26:12 2019 (+0100)
+# Last-Updated: Mon Nov 18 14:50:42 2019 (+0100)
 #           By: Louise <louise>
 #
 import logging
 from argparse import ArgumentParser
+from settings import MAP_WIDTH, MAP_HEIGHT
 from game import Game
-from frontends import Pygame
+from frontends.console import ConsoleFrontend
 
 if __name__ == "__main__":
     argument_parser = ArgumentParser(description="""
@@ -24,10 +25,11 @@ if __name__ == "__main__":
     # the state cannot be recovered.
     try:
         with open("map.txt", "r") as file:
-            game = Game(file)
+            game = Game(file, width = MAP_WIDTH, height = MAP_HEIGHT)
     except FileNotFoundError:
         logging.critical("Couldn't open map file (map.txt).")
         exit()
 
     # Initializing Frontend object.
-    frontend = Pygame()
+    frontend = ConsoleFrontend()
+    frontend.main_loop(game)
