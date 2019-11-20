@@ -3,7 +3,7 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Wed Nov 20 11:11:11 2019 (+0100)
+# Last-Updated: Wed Nov 20 17:46:24 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
@@ -19,8 +19,12 @@ class PygameFrontend(Frontend):
         self.scale = scale
         self.screen = pygame.display.set_mode((width * scale,
                                                height * scale))
+        self.running = False
 
         # TODO: config path
+        self.bigfont = pygame.font.SysFont("serif", self.scale * 2)
+        self.littlefont = pygame.font.SysFont("serif", self.scale)
+        
         self.assets = {
             "floor": pygame.image.load("assets/floor.bmp"),
             "wall":  pygame.image.load("assets/wall.bmp"),
@@ -42,10 +46,42 @@ class PygameFrontend(Frontend):
         rect.y = pos_y * self.scale + (self.scale - rect.h) // 2
         self.screen.blit(sprite, rect)
 
-    def main_loop(self, game):
-        running = True
+    def print_centered(self, font, text, y_position):
+        text = font.render(text, True, (0, 0, 0))
+        rect = text.get_rect()
+        rect.x = (self.width * self.scale - rect.w) // 2
 
-        while running:
+        if y_position == "top":
+            rect.y = (self.height * self.scale // 2) - rect.h
+        elif y_position == "bottom":
+            rect.y = (self.height * self.scale // 2)
+
+        self.screen.blit(text, rect)
+        
+    def defeat(self):
+        self.print_centered(self.bigfont, "You lost!", "top")
+        self.print_centered(self.littlefont,
+                            "You failed to collect all items.",
+                            "bottom")
+        pygame.display.flip()
+        pygame.time.wait(4000)
+        
+        self.running = False
+
+    def victory(self):
+        self.print_centered(self.bigfont, "You win!", "top")
+        self.print_centered(self.littlefont,
+                            "You escape unnoticed.",
+                            "bottom")
+        pygame.display.flip()
+        pygame.time.wait(4000)
+        
+        self.running = False
+        
+    def main_loop(self, game):
+        self.running = True
+
+        while self.running:
             state = game.game_state()
 
             # Fill the screen with white
@@ -80,7 +116,7 @@ class PygameFrontend(Frontend):
             # (or exiting the game)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
                 elif event.type == pygame.KEYDOWN:
                     event_key = None
 
@@ -96,6 +132,9 @@ class PygameFrontend(Frontend):
                     # If event_key is None, that means no valid keys
                     # were pressed
                     if event_key:
-                        success, game = game.send_event(event_key)
-                        if not success:
-                            logging.debug("Move was not possible")
+                        change, game = game.send_event(event_key)
+                        # If change is True but not victory, then it's defeat
+                        if change and game.game_state()["victory"] == True:
+                            self.victory()
+                        elif change:
+                            self.defeat()

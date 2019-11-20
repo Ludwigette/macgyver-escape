@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Wed Nov 20 12:52:21 2019 (+0100)
+# Last-Updated: Wed Nov 20 17:22:34 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -40,6 +40,9 @@ class Game:
         self.guard = self.map.index('B')
         self.map[self.guard] = ' '
 
+        # Misc.
+        self.victory = False
+
     # Returns game state (array of chars)
     def game_state(self):
         return {
@@ -50,12 +53,14 @@ class Game:
             # Murdock position
             "guard": self.guard,
             # Objects position
-            "objects": self.objects
+            "objects": self.objects,
+            # Victory status
+            "victory": self.victory
         }
 
     # Send an event (U for Up, R for Right, D for Down, L for Left)
-    # Returns a tuple of a boolean representing if the event was possible,
-    # and the new Game object
+    # Returns a tuple of a boolean representing if the state of victory
+    # was changed (defeat or victory) and the new Game object
     def send_event(self, event):
         current_y, current_x = divmod(self.position, self.width)
 
@@ -78,6 +83,11 @@ class Game:
         if self.map[new_position] == "W":
             return False, self
 
+        # Checking if new position is that of the guard, and if it is,
+        # check defeat or victory
+        if new_position == self.guard:
+            return True, self
+            
         # Updating position
         self.position = new_position
-        return True, self
+        return False, self
