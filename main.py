@@ -4,16 +4,16 @@
 # Filename: main.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:21:33 2019 (+0100)
-# Last-Updated: Mon Nov 18 14:50:42 2019 (+0100)
+# Last-Updated: Tue Nov 19 23:29:20 2019 (+0100)
 #           By: Louise <louise>
 #
 import logging
 from argparse import ArgumentParser
 from settings import MAP_WIDTH, MAP_HEIGHT
 from game import Game
-from frontends.console import ConsoleFrontend
+from frontends.pygame import PygameFrontend
 
-if __name__ == "__main__":
+def main():
     argument_parser = ArgumentParser(description="""
     Labyrinth game where you have to get
     MacGyver out.
@@ -31,5 +31,10 @@ if __name__ == "__main__":
         exit()
 
     # Initializing Frontend object.
-    frontend = ConsoleFrontend()
+    frontend = PygameFrontend()
+
+    # Main loop
     frontend.main_loop(game)
+
+if __name__ == "__main__":
+    main()
