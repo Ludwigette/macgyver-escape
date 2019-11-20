@@ -26,4 +26,4 @@ the dependencies in a virtual environment, then run
 
 	virtualenv -p python3 env
 	pip3 install -r requirements.txt
-	python3 main.py # Or ./main.py
+	python3 -m main # Or ./main.py
