@@ -3,13 +3,16 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Wed Nov 20 11:05:47 2019 (+0100)
+# Last-Updated: Wed Nov 20 12:52:21 2019 (+0100)
 #           By: Louise <louise>
 #
-import logging, random
+import random
+import logging
+
 
 class Game:
-    def __init__(self, file_object, width = 15, height = 15):
+    """Game logic class."""
+    def __init__(self, file_object, width=15, height=15):
         # Loading every character in file object except for newlines
         self.map = [char
                     for line in file_object.readlines()
@@ -30,13 +33,13 @@ class Game:
             "tube": objects_positions[1],
             "ether": objects_positions[2]
         }
-        
+
         # no need to keep initial position in map, both of macgyver and murdock
         self.position = self.map.index('M')
         self.map[self.position] = ' '
         self.guard = self.map.index('B')
         self.map[self.guard] = ' '
-        
+
     # Returns game state (array of chars)
     def game_state(self):
         return {
@@ -57,10 +60,14 @@ class Game:
         current_y, current_x = divmod(self.position, self.width)
 
         # New position
-        if event == "U": new_y, new_x = current_y - 1, current_x
-        elif event == "R": new_y, new_x = current_y, current_x + 1
-        elif event == "D": new_y, new_x = current_y + 1, current_x
-        elif event == "L": new_y, new_x = current_y, current_x - 1
+        if event == "U":
+            new_y, new_x = current_y - 1, current_x
+        elif event == "R":
+            new_y, new_x = current_y, current_x + 1
+        elif event == "D":
+            new_y, new_x = current_y + 1, current_x
+        elif event == "L":
+            new_y, new_x = current_y, current_x - 1
 
         # Checking if new position is within bounds
         if not (0 <= new_y < self.height and 0 <= new_x < self.width):
@@ -70,7 +77,7 @@ class Game:
         new_position = new_y * self.width + new_x
         if self.map[new_position] == "W":
             return False, self
-        
+
         # Updating position
         self.position = new_position
         return True, self

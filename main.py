@@ -4,7 +4,7 @@
 # Filename: main.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:21:33 2019 (+0100)
-# Last-Updated: Tue Nov 19 23:29:20 2019 (+0100)
+# Last-Updated: Wed Nov 20 12:54:24 2019 (+0100)
 #           By: Louise <louise>
 #
 import logging
@@ -13,7 +13,11 @@ from settings import MAP_WIDTH, MAP_HEIGHT
 from game import Game
 from frontends.pygame import PygameFrontend
 
+
 def main():
+    """Main function. It parses argument, instances the
+    Game object and Frontend, and calls the main loop."""
+
     argument_parser = ArgumentParser(description="""
     Labyrinth game where you have to get
     MacGyver out.
@@ -25,7 +29,7 @@ def main():
     # the state cannot be recovered.
     try:
         with open("map.txt", "r") as file:
-            game = Game(file, width = MAP_WIDTH, height = MAP_HEIGHT)
+            game = Game(file, width=MAP_WIDTH, height=MAP_HEIGHT)
     except FileNotFoundError:
         logging.critical("Couldn't open map file (map.txt).")
         exit()
@@ -35,6 +39,7 @@ def main():
 
     # Main loop
     frontend.main_loop(game)
+
 
 if __name__ == "__main__":
     main()

@@ -1,16 +1,18 @@
-# pygame.py --- 
-# 
+# pygame.py ---
+#
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Wed Nov 20 11:07:52 2019 (+0100)
+# Last-Updated: Wed Nov 20 11:11:11 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
-import pygame, logging
+import pygame
+import logging
+
 
 class PygameFrontend(Frontend):
-    def __init__(self, width = 15, height = 15, scale = 20):
+    def __init__(self, width=15, height=15, scale=20):
         pygame.init()
         self.width = width
         self.height = height
@@ -39,13 +41,13 @@ class PygameFrontend(Frontend):
         rect.x = pos_x * self.scale + (self.scale - rect.w) // 2
         rect.y = pos_y * self.scale + (self.scale - rect.h) // 2
         self.screen.blit(sprite, rect)
-        
+
     def main_loop(self, game):
         running = True
-        
+
         while running:
             state = game.game_state()
-            
+
             # Fill the screen with white
             self.screen.fill((255, 255, 255))
 
@@ -58,13 +60,18 @@ class PygameFrontend(Frontend):
                     self.screen.blit(self.assets["wall"], position_to_blit)
                 else:
                     self.screen.blit(self.assets["floor"], position_to_blit)
-            
+
             # Draw the overlays (Macgyver, Murdock and the objects)
-            self.print_overlay_sprite(self.assets["macgyver"], state["position"])
-            self.print_overlay_sprite(self.assets["guard"], state["guard"])
-            self.print_overlay_sprite(self.assets["needle"], state["objects"]["needle"])
-            self.print_overlay_sprite(self.assets["ether"], state["objects"]["ether"])
-            self.print_overlay_sprite(self.assets["tube"], state["objects"]["tube"])
+            self.print_overlay_sprite(self.assets["macgyver"],
+                                      state["position"])
+            self.print_overlay_sprite(self.assets["guard"],
+                                      state["guard"])
+            self.print_overlay_sprite(self.assets["needle"],
+                                      state["objects"]["needle"])
+            self.print_overlay_sprite(self.assets["ether"],
+                                      state["objects"]["ether"])
+            self.print_overlay_sprite(self.assets["tube"],
+                                      state["objects"]["tube"])
 
             # Finish drawing
             pygame.display.flip()
@@ -76,7 +83,7 @@ class PygameFrontend(Frontend):
                     running = False
                 elif event.type == pygame.KEYDOWN:
                     event_key = None
-                    
+
                     if event.key == pygame.K_UP:
                         event_key = "U"
                     elif event.key == pygame.K_RIGHT:
@@ -86,7 +93,8 @@ class PygameFrontend(Frontend):
                     elif event.key == pygame.K_LEFT:
                         event_key = "L"
 
-                    # If event_key is None, that means no valid keys were pressed
+                    # If event_key is None, that means no valid keys
+                    # were pressed
                     if event_key:
                         success, game = game.send_event(event_key)
                         if not success:
