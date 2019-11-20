@@ -3,11 +3,11 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Wed Nov 20 10:22:26 2019 (+0100)
+# Last-Updated: Wed Nov 20 11:07:52 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
-import pygame
+import pygame, logging
 
 class PygameFrontend(Frontend):
     def __init__(self, width = 15, height = 15, scale = 20):
@@ -41,8 +41,11 @@ class PygameFrontend(Frontend):
         self.screen.blit(sprite, rect)
         
     def main_loop(self, game):
-        while True:
+        running = True
+        
+        while running:
             state = game.game_state()
+            
             # Fill the screen with white
             self.screen.fill((255, 255, 255))
 
@@ -55,11 +58,36 @@ class PygameFrontend(Frontend):
                     self.screen.blit(self.assets["wall"], position_to_blit)
                 else:
                     self.screen.blit(self.assets["floor"], position_to_blit)
+            
             # Draw the overlays (Macgyver, Murdock and the objects)
             self.print_overlay_sprite(self.assets["macgyver"], state["position"])
             self.print_overlay_sprite(self.assets["guard"], state["guard"])
             self.print_overlay_sprite(self.assets["needle"], state["objects"]["needle"])
             self.print_overlay_sprite(self.assets["ether"], state["objects"]["ether"])
             self.print_overlay_sprite(self.assets["tube"], state["objects"]["tube"])
-            
+
+            # Finish drawing
             pygame.display.flip()
+
+            # Polling events and sending them to game logic
+            # (or exiting the game)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.KEYDOWN:
+                    event_key = None
+                    
+                    if event.key == pygame.K_UP:
+                        event_key = "U"
+                    elif event.key == pygame.K_RIGHT:
+                        event_key = "R"
+                    elif event.key == pygame.K_DOWN:
+                        event_key = "D"
+                    elif event.key == pygame.K_LEFT:
+                        event_key = "L"
+
+                    # If event_key is None, that means no valid keys were pressed
+                    if event_key:
+                        success, game = game.send_event(event_key)
+                        if not success:
+                            logging.debug("Move was not possible")

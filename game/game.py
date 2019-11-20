@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Wed Nov 20 10:09:16 2019 (+0100)
+# Last-Updated: Wed Nov 20 11:05:47 2019 (+0100)
 #           By: Louise <louise>
 #
 import logging, random
@@ -14,6 +14,9 @@ class Game:
         self.map = [char
                     for line in file_object.readlines()
                     for char in line if char != '\n']
+
+        self.width = width
+        self.height = height
         if len(self.map) != width * height:
             logging.warning("Map file is not 15x15. Might not be a map file.")
             logging.warning("The map array will be cut down to 15x15.")
@@ -51,4 +54,23 @@ class Game:
     # Returns a tuple of a boolean representing if the event was possible,
     # and the new Game object
     def send_event(self, event):
-        pass
+        current_y, current_x = divmod(self.position, self.width)
+
+        # New position
+        if event == "U": new_y, new_x = current_y - 1, current_x
+        elif event == "R": new_y, new_x = current_y, current_x + 1
+        elif event == "D": new_y, new_x = current_y + 1, current_x
+        elif event == "L": new_y, new_x = current_y, current_x - 1
+
+        # Checking if new position is within bounds
+        if not (0 <= new_y < self.height and 0 <= new_x < self.width):
+            return False, self
+
+        # Checking if new position is a wall
+        new_position = new_y * self.width + new_x
+        if self.map[new_position] == "W":
+            return False, self
+        
+        # Updating position
+        self.position = new_position
+        return True, self
