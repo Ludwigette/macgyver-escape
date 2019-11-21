@@ -4,7 +4,7 @@
 # Filename: main.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:21:33 2019 (+0100)
-# Last-Updated: Wed Nov 20 12:54:24 2019 (+0100)
+# Last-Updated: Thu Nov 21 13:47:45 2019 (+0100)
 #           By: Louise <louise>
 #
 import logging
@@ -22,7 +22,7 @@ def main():
     Labyrinth game where you have to get
     MacGyver out.
     """)
-
+    
     args = argument_parser.parse_args()
 
     # Initializating Game object. If the file cannot be opened,

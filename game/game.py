@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Thu Nov 21 12:53:24 2019 (+0100)
+# Last-Updated: Thu Nov 21 13:54:12 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -92,8 +92,19 @@ class Game:
                 # If that's the case, delete from
                 # the list of objects yet to find
                 # and add to inventory
-                self.inventory += obj
+                self.inventory.append(obj)
                 del self.objects[obj]
+
+                # If all items have been collected,
+                # craft the syringe
+                if ("needle" in self.inventory and
+                    "tube" in self.inventory and
+                    "ether" in self.inventory):
+                    self.inventory.remove("needle")
+                    self.inventory.remove("tube")
+                    self.inventory.remove("ether")
+                    self.inventory.append("syringe")
+                
                 break
         
         # Checking if new position is that of the guard, and if it is,
