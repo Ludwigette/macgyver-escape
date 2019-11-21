@@ -3,11 +3,10 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Thu Nov 21 14:50:38 2019 (+0100)
+# Last-Updated: Thu Nov 21 18:32:32 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
-import math
 import logging
 
 
@@ -62,37 +61,27 @@ class Game:
             "victory": self.victory
         }
 
-    # Send an event (U for Up, R for Right, D for Down, L for Left)
-    # Returns a tuple of a boolean representing if the state of victory
-    # was changed (defeat or victory) and the new Game object
-    def send_event(self, event):
-        current_y, current_x = divmod(self.position, self.width)
-
-        # New position
-        if event == "U":
-            new_y, new_x = current_y - 1, current_x
-        elif event == "R":
-            new_y, new_x = current_y, current_x + 1
-        elif event == "D":
-            new_y, new_x = current_y + 1, current_x
-        elif event == "L":
-            new_y, new_x = current_y, current_x - 1
+    def is_new_position_possible(self, new_x, new_y):
+        new_position = new_y * self.width + new_x
 
         # Checking if new position is within bounds
         if not (0 <= new_y < self.height and 0 <= new_x < self.width):
-            return False, self
+            return False
 
         # Checking if new position is a wall
-        new_position = new_y * self.width + new_x
         if self.map[new_position] == "W":
-            return False, self
+            return False
 
-        # We can move there, so we update the position
-        self.position = new_position
+        return True
 
-        # Checkin if new position is an object
+    def obtain_object(self, position):
+        """
+        Check if there's an object in the new position, and if there is,
+        put it out of the map and into the inventory of the player.
+        """
+
         for obj, pos in self.objects.items():
-            if new_position == pos:
+            if position == pos:
                 # If that's the case, delete from
                 # the list of objects yet to find
                 # and add to inventory
@@ -102,23 +91,44 @@ class Game:
                 # If all items have been collected,
                 # craft the syringe
                 if ("needle" in self.inventory and
-                    "tube" in self.inventory and
-                    "ether" in self.inventory):
+                        "tube" in self.inventory and
+                        "ether" in self.inventory):
                     self.inventory.remove("needle")
                     self.inventory.remove("tube")
                     self.inventory.remove("ether")
                     self.inventory.append("syringe")
 
-                break
+                return
 
-        # Checking if new position is near the guard, and if it is,
+    def send_event(self, event):
+        """
+        Send an event (U for Up, R for Right, D for Down, L for Left)
+        Returns a tuple of a boolean representing if the state of victory
+        was changed (defeat or victory) and the new Game object
+        """
+        current_y, current_x = divmod(self.position, self.width)
+
+        # Get new position
+        if event == "U":
+            new_y, new_x = current_y - 1, current_x
+        elif event == "R":
+            new_y, new_x = current_y, current_x + 1
+        elif event == "D":
+            new_y, new_x = current_y + 1, current_x
+        elif event == "L":
+            new_y, new_x = current_y, current_x - 1
+
+        if not self.is_new_position_possible(new_x, new_y):
+            return False, self
+
+        new_position = new_y * self.width + new_x
+        self.position = new_position
+        self.obtain_object(new_position)
+
+        # Checking if new position is that of the guard, and if it is,
         # check defeat or victory. You win if you have the syringe
         # in your inventory.
-        guard_y, guard_x = divmod(self.guard, self.width)
-        distance_to_the_guard = math.sqrt(abs(guard_x - new_x) ** 2 +
-                                          abs(guard_y - new_y) ** 2)
-
-        if distance_to_the_guard <= 1.0:
+        if new_position == self.guard:
             self.victory = "syringe" in self.inventory
             return True, self
 

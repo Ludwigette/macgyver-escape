@@ -3,15 +3,14 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Thu Nov 21 14:49:22 2019 (+0100)
+# Last-Updated: Thu Nov 21 18:58:41 2019 (+0100)
 #           By: Louise <louise>
 #
-from .general import Frontend
 import pygame
 import settings
 
 
-class PygameFrontend(Frontend):
+class PygameFrontend:
     def __init__(self, width=15, height=15, scale=20):
         pygame.init()
         self.width = width
@@ -21,9 +20,11 @@ class PygameFrontend(Frontend):
                                                (height + 1) * scale))
         self.running = False
 
-        self.bigfont = pygame.font.SysFont("serif", self.scale * 2)
-        self.littlefont = pygame.font.SysFont("serif", self.scale)
-        self.tinyfont = pygame.font.SysFont("serif", int(self.scale / 1.50))
+        self.fonts = {
+            "big": pygame.font.SysFont("serif", self.scale * 2),
+            "little": pygame.font.SysFont("serif", self.scale),
+            "tiny": pygame.font.SysFont("serif", int(self.scale / 1.50))
+        }
 
         self.assets = {
             "floor": pygame.image.load(settings.PYGAME_ASSETS_FLOOR),
@@ -87,8 +88,8 @@ class PygameFrontend(Frontend):
                                       pos)
 
     def draw_inventory(self, state):
-        text_inv = self.tinyfont.render("Inventory:", True,
-                                        settings.PYGAME_TEXT_COLOR)
+        text_inv = self.fonts["tiny"].render("Inventory:", True,
+                                             settings.PYGAME_TEXT_COLOR)
         rect_inv = text_inv.get_rect()
         rect_inv.y = self.height * self.scale
         self.screen.blit(text_inv, rect_inv)
@@ -119,8 +120,8 @@ class PygameFrontend(Frontend):
 
     def draw_defeat(self):
         """Draw the defeat screen, wait 4 seconds and exit the main loop"""
-        self.print_centered(self.bigfont, "You lost!", "top")
-        self.print_centered(self.littlefont,
+        self.print_centered(self.fonts["big"], "You lost!", "top")
+        self.print_centered(self.fonts["little"],
                             "You failed to collect all items.",
                             "bottom")
         pygame.display.flip()
@@ -130,8 +131,8 @@ class PygameFrontend(Frontend):
 
     def draw_victory(self):
         """Draw the victory screen, wait 4 seconds and exit the main loop"""
-        self.print_centered(self.bigfont, "You win!", "top")
-        self.print_centered(self.littlefont,
+        self.print_centered(self.fonts["big"], "You win!", "top")
+        self.print_centered(self.fonts["little"],
                             "You escape unnoticed.",
                             "bottom")
         pygame.display.flip()
@@ -164,13 +165,9 @@ class PygameFrontend(Frontend):
                 if event_key:
                     change, game = game.send_event(event_key)
                     # If change is True but not victory, then it's defeat
-                    # in each call, we call again the drawing function to
-                    # draw the new position of the hero before the end
                     if change and game.game_state()["victory"]:
-                        self.draw_game(game)
                         self.draw_victory()
                     elif change:
-                        self.draw_game(game)
                         self.draw_defeat()
 
     def main_loop(self, game):

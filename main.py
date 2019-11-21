@@ -4,9 +4,10 @@
 # Filename: main.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:21:33 2019 (+0100)
-# Last-Updated: Thu Nov 21 14:41:28 2019 (+0100)
+# Last-Updated: Thu Nov 21 18:37:37 2019 (+0100)
 #           By: Louise <louise>
 #
+import sys
 import logging
 from settings import MAP_WIDTH, MAP_HEIGHT
 from game import Game
@@ -24,7 +25,7 @@ def main():
             game = Game(file, width=MAP_WIDTH, height=MAP_HEIGHT)
     except FileNotFoundError:
         logging.critical("Couldn't open map file (map.txt).")
-        exit()
+        sys.exit()
 
     # Initializing Frontend object.
     frontend = PygameFrontend()
