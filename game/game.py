@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Wed Nov 20 22:39:27 2019 (+0100)
+# Last-Updated: Thu Nov 21 12:53:24 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -42,6 +42,7 @@ class Game:
 
         # Misc.
         self.victory = False
+        self.inventory = []
 
     # Returns game state (array of chars)
     def game_state(self):
@@ -52,8 +53,10 @@ class Game:
             "position": self.position,
             # Murdock position
             "guard": self.guard,
-            # Objects position
+            # Objects yet to find's position
             "objects": self.objects,
+            # Inventory (objects found)
+            "inventory": self.inventory,
             # Victory status
             "victory": self.victory
         }
@@ -83,12 +86,23 @@ class Game:
         if self.map[new_position] == "W":
             return False, self
 
+        # Checkin if new position is an object
+        for obj, pos in self.objects.items():
+            if new_position == pos:
+                # If that's the case, delete from
+                # the list of objects yet to find
+                # and add to inventory
+                self.inventory += obj
+                del self.objects[obj]
+                break
+        
         # Checking if new position is that of the guard, and if it is,
-        # check defeat or victory
+        # check defeat or victory. You win if you have the syringe
+        # in your inventory.
         if new_position == self.guard:
-            self.victory = True
+            self.victory = "syringe" in self.inventory
             return True, self
-            
+        
         # Updating position
         self.position = new_position
         return False, self
