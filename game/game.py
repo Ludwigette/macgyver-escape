@@ -3,10 +3,11 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Thu Nov 21 13:54:12 2019 (+0100)
+# Last-Updated: Thu Nov 21 14:30:18 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
+import math
 import logging
 
 
@@ -107,10 +108,14 @@ class Game:
                 
                 break
         
-        # Checking if new position is that of the guard, and if it is,
+        # Checking if new position is near the guard, and if it is,
         # check defeat or victory. You win if you have the syringe
         # in your inventory.
-        if new_position == self.guard:
+        guard_y, guard_x = divmod(self.guard, self.width)
+        distance_to_the_guard = math.sqrt(abs(guard_x - new_x) ** 2 +
+                                          abs(guard_y - new_y) ** 2)
+        
+        if distance_to_the_guard <= 1.0:
             self.victory = "syringe" in self.inventory
             return True, self
         
