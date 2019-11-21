@@ -3,7 +3,7 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Thu Nov 21 14:34:20 2019 (+0100)
+# Last-Updated: Thu Nov 21 14:49:22 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
@@ -164,9 +164,13 @@ class PygameFrontend(Frontend):
                 if event_key:
                     change, game = game.send_event(event_key)
                     # If change is True but not victory, then it's defeat
+                    # in each call, we call again the drawing function to
+                    # draw the new position of the hero before the end
                     if change and game.game_state()["victory"]:
+                        self.draw_game(game)
                         self.draw_victory()
                     elif change:
+                        self.draw_game(game)
                         self.draw_defeat()
 
     def main_loop(self, game):

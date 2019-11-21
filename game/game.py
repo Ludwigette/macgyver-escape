@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Thu Nov 21 14:36:00 2019 (+0100)
+# Last-Updated: Thu Nov 21 14:50:38 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -87,6 +87,9 @@ class Game:
         if self.map[new_position] == "W":
             return False, self
 
+        # We can move there, so we update the position
+        self.position = new_position
+
         # Checkin if new position is an object
         for obj, pos in self.objects.items():
             if new_position == pos:
@@ -119,6 +122,5 @@ class Game:
             self.victory = "syringe" in self.inventory
             return True, self
 
-        # Updating position
-        self.position = new_position
+        # Otherwise, we return the new state
         return False, self
