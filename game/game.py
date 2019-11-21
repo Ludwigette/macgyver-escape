@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Wed Nov 20 17:22:34 2019 (+0100)
+# Last-Updated: Wed Nov 20 22:39:27 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -86,6 +86,7 @@ class Game:
         # Checking if new position is that of the guard, and if it is,
         # check defeat or victory
         if new_position == self.guard:
+            self.victory = True
             return True, self
             
         # Updating position

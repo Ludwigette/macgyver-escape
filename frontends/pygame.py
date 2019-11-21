@@ -3,13 +3,13 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Wed Nov 20 17:46:24 2019 (+0100)
+# Last-Updated: Thu Nov 21 11:28:56 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
 import pygame
 import logging
-
+import settings
 
 class PygameFrontend(Frontend):
     def __init__(self, width=15, height=15, scale=20):
@@ -26,14 +26,14 @@ class PygameFrontend(Frontend):
         self.littlefont = pygame.font.SysFont("serif", self.scale)
         
         self.assets = {
-            "floor": pygame.image.load("assets/floor.bmp"),
-            "wall":  pygame.image.load("assets/wall.bmp"),
-            "macgyver": pygame.image.load("assets/MacGyver.bmp"),
-            "guard": pygame.image.load("assets/murdock.bmp"),
-            "needle": pygame.image.load("assets/needle.bmp"),
-            "ether": pygame.image.load("assets/ether.bmp"),
-            "tube": pygame.image.load("assets/tube.bmp"),
-            "syringe": pygame.image.load("assets/syringe.bmp"),
+            "floor": pygame.image.load(settings.PYGAME_ASSETS_FLOOR),
+            "wall":  pygame.image.load(settings.PYGAME_ASSETS_WALL),
+            "macgyver": pygame.image.load(settings.PYGAME_ASSETS_MACGYVER),
+            "guard": pygame.image.load(settings.PYGAME_ASSETS_GUARD),
+            "needle": pygame.image.load(settings.PYGAME_ASSETS_NEEDLE),
+            "ether": pygame.image.load(settings.PYGAME_ASSETS_ETHER),
+            "tube": pygame.image.load(settings.PYGAME_ASSETS_TUBE),
+            "syringe": pygame.image.load(settings.PYGAME_ASSETS_SYRINGE),
         }
 
     # print a sprite intended to be an overlay, i.e. a sprite on top
