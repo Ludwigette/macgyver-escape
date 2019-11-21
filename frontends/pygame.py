@@ -3,7 +3,7 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Thu Nov 21 13:05:02 2019 (+0100)
+# Last-Updated: Thu Nov 21 14:23:32 2019 (+0100)
 #           By: Louise <louise>
 #
 from .general import Frontend
@@ -23,6 +23,7 @@ class PygameFrontend(Frontend):
 
         self.bigfont = pygame.font.SysFont("serif", self.scale * 2)
         self.littlefont = pygame.font.SysFont("serif", self.scale)
+        self.tinyfont = pygame.font.SysFont("serif", int(self.scale / 1.50))
         
         self.assets = {
             "floor": pygame.image.load(settings.PYGAME_ASSETS_FLOOR),
@@ -53,7 +54,7 @@ class PygameFrontend(Frontend):
         """
         Print text with font, either on top of the middle line or underneath.
         """
-        text = font.render(text, True, (0, 0, 0))
+        text = font.render(text, True, settings.PYGAME_TEXT_COLOR)
         rect = text.get_rect()
         rect.x = (self.width * self.scale - rect.w) // 2
 
@@ -63,8 +64,61 @@ class PygameFrontend(Frontend):
             rect.y = (self.height * self.scale // 2)
 
         self.screen.blit(text, rect)
+
+    def draw_base_map(self, state):
+        """Draw the base map, i.e. the maze"""
+        for i, content in enumerate(state["map"]):
+            y, x = divmod(i, self.width)
+            position_to_blit = pygame.Rect(x * self.scale, y * self.scale,
+                                           self.scale, self.scale)
+            if content == "W":
+                self.screen.blit(self.assets["wall"], position_to_blit)
+            else:
+                self.screen.blit(self.assets["floor"], position_to_blit)
+
+    def draw_overlays(self, state):
+        """Draw overlays, (the hero, the gard, and the objects)"""
+        self.print_overlay_sprite(self.assets["macgyver"],
+                                  state["position"])
+        self.print_overlay_sprite(self.assets["guard"],
+                                  state["guard"])
+        for obj, pos in state["objects"].items():
+            self.print_overlay_sprite(self.assets[obj],
+                                      pos)
+
+    def draw_inventory(self, state):
+        text_inv = self.tinyfont.render("Inventory:", True,
+                                          settings.PYGAME_TEXT_COLOR)
+        rect_inv = text_inv.get_rect()
+        rect_inv.y = self.height * self.scale
+        self.screen.blit(text_inv, rect_inv)
+
+        # Draw all objects in inventory
+        pos_x = rect_inv.w
+        for obj in state["inventory"]:
+            rect = self.assets[obj].get_rect()
+            # The X position is where we left off, with a small margin
+            rect.x = pos_x + (self.scale // 5)
+            rect.y = (self.height * self.scale) + (self.scale - rect.h) // 2
+            self.screen.blit(self.assets[obj], rect)
+
+            # Modify X position for next object
+            pos_x = rect.x + rect.w
+            
+    def draw_game(self, game):
+        """Draw the game state on self.screen"""
+        state = game.game_state()
         
-    def defeat(self):
+        self.screen.fill(settings.PYGAME_BG_COLOR)
+        self.draw_base_map(state)
+        self.draw_overlays(state)
+        self.draw_inventory(state)
+            
+        # Finish drawing
+        pygame.display.flip()
+
+        
+    def draw_defeat(self):
         """Draw the defeat screen, wait 4 seconds and exit the main loop"""
         self.print_centered(self.bigfont, "You lost!", "top")
         self.print_centered(self.littlefont,
@@ -75,7 +129,7 @@ class PygameFrontend(Frontend):
         
         self.running = False
 
-    def victory(self):
+    def draw_victory(self):
         """Draw the victory screen, wait 4 seconds and exit the main loop"""
         self.print_centered(self.bigfont, "You win!", "top")
         self.print_centered(self.littlefont,
@@ -85,35 +139,6 @@ class PygameFrontend(Frontend):
         pygame.time.wait(4000)
         
         self.running = False
-
-    def draw_game(self, game):
-        """Draw the game state on self.screen"""
-        state = game.game_state()
-        
-        # Fill the screen with white
-        self.screen.fill((255, 255, 255))
-
-        # Draw the base map
-        for i, content in enumerate(state["map"]):
-            y, x = divmod(i, self.width)
-            position_to_blit = pygame.Rect(x * self.scale, y * self.scale,
-                                           self.scale, self.scale)
-            if content == "W":
-                self.screen.blit(self.assets["wall"], position_to_blit)
-            else:
-                self.screen.blit(self.assets["floor"], position_to_blit)
-
-        # Draw the overlays (Macgyver, Murdock and the objects)
-        self.print_overlay_sprite(self.assets["macgyver"],
-                                  state["position"])
-        self.print_overlay_sprite(self.assets["guard"],
-                                  state["guard"])
-        for obj, pos in state["objects"].items():
-            self.print_overlay_sprite(self.assets[obj],
-                                      pos)
-                
-        # Finish drawing
-        pygame.display.flip()
 
     def treat_events(self, game):
         """
@@ -141,9 +166,9 @@ class PygameFrontend(Frontend):
                     change, game = game.send_event(event_key)
                     # If change is True but not victory, then it's defeat
                     if change and game.game_state()["victory"] == True:
-                        self.victory()
+                        self.draw_victory()
                     elif change:
-                        self.defeat()
+                        self.draw_defeat()
 
             
     def main_loop(self, game):

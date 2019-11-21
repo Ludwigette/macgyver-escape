@@ -3,7 +3,7 @@
 # Filename: settings.py
 # Author: Louise <louise>
 # Created: Mon Nov 18 11:00:41 2019 (+0100)
-# Last-Updated: Thu Nov 21 11:29:55 2019 (+0100)
+# Last-Updated: Thu Nov 21 14:08:08 2019 (+0100)
 #           By: Louise <louise>
 #
 import os
@@ -18,6 +18,7 @@ MAP_HEIGHT = 15
 # PygameFrontend settings
 PYGAME_ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
+PYGAME_BG_COLOR = (255, 255, 255)
 PYGAME_TEXT_COLOR = (0, 0, 0)
 
 PYGAME_ASSETS_FLOOR = os.path.join(PYGAME_ASSETS_DIR, "floor.bmp")
