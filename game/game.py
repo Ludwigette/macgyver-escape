@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Thu Nov 21 18:32:32 2019 (+0100)
+# Last-Updated: Fri Nov 22 11:53:34 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -100,6 +100,17 @@ class Game:
 
                 return
 
+    def check_end_of_game(self):
+        """
+        Check if the position is that of the guard, and if it is,
+        check if victory has been obtained (if the syringe is in
+        the inventory)
+        """
+        if self.position == self.guard:
+            self.victory = "syringe" in self.inventory
+            return True
+        return False
+
     def send_event(self, event):
         """
         Send an event (U for Up, R for Right, D for Down, L for Left)
@@ -121,16 +132,10 @@ class Game:
         if not self.is_new_position_possible(new_x, new_y):
             return False, self
 
+        # If new position is possible, we update the state,
+        # and do all the neccessary checks.
         new_position = new_y * self.width + new_x
         self.position = new_position
         self.obtain_object(new_position)
-
-        # Checking if new position is that of the guard, and if it is,
-        # check defeat or victory. You win if you have the syringe
-        # in your inventory.
-        if new_position == self.guard:
-            self.victory = "syringe" in self.inventory
-            return True, self
-
-        # Otherwise, we return the new state
-        return False, self
+        
+        return self.check_end_of_game(), self
