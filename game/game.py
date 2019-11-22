@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Fri Nov 22 11:53:34 2019 (+0100)
+# Last-Updated: Fri Nov 22 11:56:37 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -44,8 +44,8 @@ class Game:
         self.victory = False
         self.inventory = []
 
-    # Returns game state (array of chars)
     def game_state(self):
+        """Returns the game state, represented by a dictionary."""
         return {
             # Map
             "map": self.map,
@@ -62,6 +62,9 @@ class Game:
         }
 
     def is_new_position_possible(self, new_x, new_y):
+        """
+        Check if a new position on the map is possible. Returns a boolean.
+        """
         new_position = new_y * self.width + new_x
 
         # Checking if new position is within bounds
