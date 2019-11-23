@@ -3,7 +3,7 @@
 # Filename: pygame.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:59:55 2019 (+0100)
-# Last-Updated: Thu Nov 21 18:58:41 2019 (+0100)
+# Last-Updated: Sat Nov 23 13:44:21 2019 (+0100)
 #           By: Louise <louise>
 #
 import pygame
@@ -37,9 +37,6 @@ class PygameFrontend:
             "syringe": pygame.image.load(settings.PYGAME_ASSETS_SYRINGE),
         }
 
-    # print a sprite intended to be an overlay, i.e. a sprite on top
-    # of the base map. It corrects position to center it within the
-    # tile.
     def print_overlay_sprite(self, sprite, position):
         """
         Print a sprite on the screen. You give it a position on the map

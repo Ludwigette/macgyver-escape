@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Fri Nov 22 11:56:37 2019 (+0100)
+# Last-Updated: Sat Nov 23 13:44:03 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -61,6 +61,17 @@ class Game:
             "victory": self.victory
         }
 
+    def get_new_position(self, event, current_y, current_x):
+        """Returns the new position according to event and the current one"""
+        if event == "U":
+            return current_y - 1, current_x
+        elif event == "R":
+            return current_y, current_x + 1
+        elif event == "D":
+            return current_y + 1, current_x
+        elif event == "L":
+            return current_y, current_x - 1
+    
     def is_new_position_possible(self, new_x, new_y):
         """
         Check if a new position on the map is possible. Returns a boolean.
@@ -121,16 +132,7 @@ class Game:
         was changed (defeat or victory) and the new Game object
         """
         current_y, current_x = divmod(self.position, self.width)
-
-        # Get new position
-        if event == "U":
-            new_y, new_x = current_y - 1, current_x
-        elif event == "R":
-            new_y, new_x = current_y, current_x + 1
-        elif event == "D":
-            new_y, new_x = current_y + 1, current_x
-        elif event == "L":
-            new_y, new_x = current_y, current_x - 1
+        new_y, new_x = self.get_new_position(event, current_y, current_x)
 
         if not self.is_new_position_possible(new_x, new_y):
             return False, self
