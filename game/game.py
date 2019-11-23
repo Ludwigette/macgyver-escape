@@ -3,7 +3,7 @@
 # Filename: game.py
 # Author: Louise <louise>
 # Created: Fri Nov 15 17:27:09 2019 (+0100)
-# Last-Updated: Sat Nov 23 13:44:03 2019 (+0100)
+# Last-Updated: Sat Nov 23 13:45:46 2019 (+0100)
 #           By: Louise <louise>
 #
 import random
@@ -138,7 +138,7 @@ class Game:
             return False, self
 
         # If new position is possible, we update the state,
-        # and do all the neccessary checks.
+        # and do all the necessary checks.
         new_position = new_y * self.width + new_x
         self.position = new_position
         self.obtain_object(new_position)
